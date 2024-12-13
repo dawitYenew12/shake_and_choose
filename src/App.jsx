@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [shakeCount, setShakeCount] = useState(0);
-  const [progressBarWidth, setProgressBarWidth] = useState(0); // New state for progress bar width
+  const [progressBarWidth, setProgressBarWidth] = useState(0); // State for progress bar width
   const [isDetectingShake, setIsDetectingShake] = useState(false);
   const [lastAcceleration, setLastAcceleration] = useState({
     x: 0,
@@ -11,9 +11,9 @@ function App() {
   });
   const [timer, setTimer] = useState(10);
 
-  const shakeSpeedThreshold = 45; // Acceleration threshold (speed) for detecting a shake
+  const shakeSpeedThreshold = 45; // Acceleration threshold for detecting a shake
   const directionChangeThreshold = 20; // Direction change threshold for detecting a shake
-  const maxShakeCount = 50; // Maximum shakes for progress bar calculation (this can be higher than real shake count)
+  const maxShakeCount = 50; // Maximum shakes for progress bar calculation
 
   useEffect(() => {
     console.log("isDetectingShake", isDetectingShake);
@@ -24,15 +24,17 @@ function App() {
     }
 
     return () => {
+      clearInterval(interval);
       window.removeEventListener("devicemotion", handleMotion);
     };
-  }, [isDetectingShake, lastAcceleration]);
+  }, [isDetectingShake, timer]);
 
   const startShakeDetection = () => {
     setIsDetectingShake(true);
     setShakeCount(0);
     setProgressBarWidth(0);
     setLastAcceleration({ x: 0, y: 0, z: 0 });
+    setTimer(10); // Reset the timer to 10 seconds
 
     setTimeout(() => {
       setIsDetectingShake(false);
@@ -65,6 +67,7 @@ function App() {
 
     setLastAcceleration(acceleration);
 
+    // Update progress bar width based on shake count
     const updatedWidth = (shakeCount / maxShakeCount) * 100;
     setProgressBarWidth(updatedWidth);
   };
