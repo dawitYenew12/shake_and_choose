@@ -13,8 +13,8 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(10);
   const [isCountingDown, setIsCountingDown] = useState(false);
 
-  const shakeSpeedThreshold = 45; // Acceleration threshold for detecting a shake
-  const directionChangeThreshold = 20; // Direction change threshold for detecting a shake
+  const shakeSpeedThreshold = 60; // Acceleration threshold for detecting a shake
+  const directionChangeThreshold = 35; // Direction change threshold for detecting a shake
   const targetShake = 100; // Maximum shake count
 
   // Effect for countdown timer
@@ -125,7 +125,7 @@ function App() {
 
       <button
         onClick={startShakeDetection}
-        className={`px-4 py-2 text-white rounded-lg ${
+        className={`px-4 py-2 w-48 text-white rounded-lg ${
           isDetectingShake ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
         }`}
         disabled={isDetectingShake}
@@ -133,7 +133,7 @@ function App() {
         {isDetectingShake ? "Detecting..." : "Start Shake Detection"}
       </button>
       <button
-        className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg ml-4 mt-4"
+        className="w-48 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg mt-4"
         onClick={() => window.location.reload()}
       >
         Refresh
