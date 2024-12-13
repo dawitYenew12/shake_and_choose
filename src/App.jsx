@@ -74,11 +74,12 @@ function App() {
 
       {/* Progress Bar */}
       <div className="w-full max-w-xs">
-        <div className="w-full bg-gray-200 rounded-md h-8 mb-6">
+        <div className="w-full bg-gray-200 rounded-md h-8 mb-6 relative">
           <div
-            className="bg-blue-500 h-4 rounded-full"
+            className="bg-blue-600 h-8 rounded-full"
             style={{ width: `${progressBarWidth}%` }}
           />
+          <span className="absolute left-1/2 top-0 text-blue-100 font-semibold text-lg">{progressBarWidth}</span>
         </div>
       </div>
 
