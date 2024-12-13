@@ -9,12 +9,14 @@ function App() {
     y: 0,
     z: 0,
   });
+  const [timer, setTimer] = useState(10);
 
   const shakeSpeedThreshold = 45; // Acceleration threshold (speed) for detecting a shake
   const directionChangeThreshold = 20; // Direction change threshold for detecting a shake
   const maxShakeCount = 50; // Maximum shakes for progress bar calculation (this can be higher than real shake count)
 
   useEffect(() => {
+    console.log("isDetectingShake", isDetectingShake);
     if (isDetectingShake) {
       window.addEventListener("devicemotion", handleMotion);
     } else {
@@ -34,17 +36,19 @@ function App() {
 
     setTimeout(() => {
       setIsDetectingShake(false);
+      setTimer((prevTimer) => prevTimer - 1);
     }, 10000);
   };
 
   const handleMotion = (event) => {
-    const acceleration = event.accelerationIncludingGravity || event.acceleration;
+    const acceleration =
+      event.accelerationIncludingGravity || event.acceleration;
 
     // Calculate speed (magnitude of acceleration)
     const currentSpeed = Math.sqrt(
       acceleration.x * acceleration.x +
-      acceleration.y * acceleration.y +
-      acceleration.z * acceleration.z
+        acceleration.y * acceleration.y +
+        acceleration.z * acceleration.z
     );
 
     const deltaX = Math.abs(lastAcceleration.x - acceleration.x);
@@ -56,7 +60,7 @@ function App() {
       currentSpeed > shakeSpeedThreshold &&
       totalDirectionChange > directionChangeThreshold
     ) {
-      setShakeCount((prevCount) => prevCount + 1); 
+      setShakeCount((prevCount) => prevCount + 1);
     }
 
     setLastAcceleration(acceleration);
@@ -69,7 +73,7 @@ function App() {
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <h1 className="text-3xl font-bold mb-6">Shake your phone!</h1>
       <p className="mb-4 text-xl">
-        Shake Count: <span className="font-bold">{shakeCount}</span>
+        Timer: <span className="font-bold">{timer}</span>
       </p>
 
       {/* Progress Bar */}
@@ -79,7 +83,9 @@ function App() {
             className="bg-blue-600 h-8 rounded-full"
             style={{ width: `${progressBarWidth}%` }}
           />
-          <span className="absolute left-1/2 top-0 text-blue-100 font-semibold text-lg">{progressBarWidth}</span>
+          <span className="absolute left-1/2 top-0 text-green-800 font-semibold text-xl">
+            {shakeCount}
+          </span>
         </div>
       </div>
 
