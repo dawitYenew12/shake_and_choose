@@ -14,30 +14,44 @@ function App() {
 
   const shakeSpeedThreshold = 45; // Acceleration threshold for detecting a shake
   const directionChangeThreshold = 20; // Direction change threshold for detecting a shake
-  const targetShake = 100;
+  const targetShake = 100; // Maximum shake count
 
-
+  // Effect for countdown timer
   useEffect(() => {
-    console.log("isDetectingShake", isDetectingShake);
+    if (isCountingDown) {
+      const intervalId = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+
+      if (timeLeft <= 0) {
+        setIsDetectingShake(false); // Stop detection when time is up
+        setIsCountingDown(false);
+      }
+
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [timeLeft, isCountingDown]);
+
+  // Effect for detecting shake motion
+  useEffect(() => {
     if (isDetectingShake) {
       window.addEventListener("devicemotion", handleMotion);
     } else {
       window.removeEventListener("devicemotion", handleMotion);
     }
 
-    if (isCountingDown) {
-      const intervalId = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
-
-      return () => {
-        clearInterval(intervalId);
-      };
-    }
     return () => {
       window.removeEventListener("devicemotion", handleMotion);
     };
-  }, [isDetectingShake, isCountingDown]);
+  }, [isDetectingShake]);
+
+  // Update the progress bar width whenever shakeCount changes
+  useEffect(() => {
+    const updatedWidth = (shakeCount / targetShake) * 100;
+    setProgressBarWidth(updatedWidth);
+  }, [shakeCount]);
 
   const startShakeDetection = () => {
     setIsDetectingShake(true);
@@ -46,14 +60,11 @@ function App() {
     setProgressBarWidth(0);
     setLastAcceleration({ x: 0, y: 0, z: 0 });
     setTimeLeft(10); // Reset the timer to 10 seconds
-
-    setTimeout(() => {
-      setIsDetectingShake(false);
-      setIsCountingDown(false);
-    }, 10000);
   };
 
   const handleMotion = (event) => {
+    if (!isDetectingShake) return; // Prevent unnecessary shake detection
+
     const acceleration =
       event.accelerationIncludingGravity || event.acceleration;
 
@@ -73,15 +84,10 @@ function App() {
       currentSpeed > shakeSpeedThreshold &&
       totalDirectionChange > directionChangeThreshold
     ) {
-      setShakeCount((prevCount) => prevCount + 1);
-      const updatedWidth = (shakeCount / targetShake) * 100;
-      console.log(updatedWidth);
-      setProgressBarWidth(updatedWidth);
+      setShakeCount((prevCount) => Math.min(prevCount + 1, targetShake)); // Increment shake count but cap it to targetShake
     }
 
     setLastAcceleration(acceleration);
-
-    // Update progress bar width based on shake count
   };
 
   return (
@@ -113,7 +119,10 @@ function App() {
       >
         {isDetectingShake ? "Detecting..." : "Start Shake Detection"}
       </button>
-      <button className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg ml-4 mt-4" onClick={() => window.location.reload()}>
+      <button
+        className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg ml-4 mt-4"
+        onClick={() => window.location.reload()}
+      >
         Refresh
       </button>
     </div>
