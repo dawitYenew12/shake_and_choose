@@ -24,10 +24,9 @@ function App() {
     }
 
     return () => {
-      clearInterval(interval);
       window.removeEventListener("devicemotion", handleMotion);
     };
-  }, [isDetectingShake, timer]);
+  }, [isDetectingShake, lastAcceleration]);
 
   const startShakeDetection = () => {
     setIsDetectingShake(true);
