@@ -74,14 +74,14 @@ function App() {
       totalDirectionChange > directionChangeThreshold
     ) {
       setShakeCount((prevCount) => prevCount + 1);
+      const updatedWidth = (shakeCount / targetShake) * 100;
+      console.log(updatedWidth);
+      setProgressBarWidth(updatedWidth);
     }
 
     setLastAcceleration(acceleration);
 
     // Update progress bar width based on shake count
-    const updatedWidth = (shakeCount / targetShake) * 100;
-    console.log(updatedWidth);
-    setProgressBarWidth(updatedWidth);
   };
 
   return (
@@ -112,6 +112,9 @@ function App() {
         disabled={isDetectingShake}
       >
         {isDetectingShake ? "Detecting..." : "Start Shake Detection"}
+      </button>
+      <button className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-lg ml-4 mt-4" onClick={() => window.location.reload()}>
+        Refresh
       </button>
     </div>
   );
