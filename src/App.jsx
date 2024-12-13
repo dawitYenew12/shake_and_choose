@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
   const [shakeCount, setShakeCount] = useState(0);
@@ -26,6 +27,7 @@ function App() {
       if (timeLeft <= 0) {
         setIsDetectingShake(false); // Stop detection when time is up
         setIsCountingDown(false);
+        sendShakeCount();
       }
 
       return () => {
@@ -84,27 +86,38 @@ function App() {
       currentSpeed > shakeSpeedThreshold &&
       totalDirectionChange > directionChangeThreshold
     ) {
-      setShakeCount((prevCount) => Math.min(prevCount + 1, targetShake)); // Increment shake count but cap it to targetShake
+      setShakeCount((prevCount) => Math.min(prevCount + 1, targetShake));
     }
 
     setLastAcceleration(acceleration);
+  };
+
+  const sendShakeCount = async () => {
+    try {
+      await axios.post("http://localhost:7000/shakeResult", { shakeCount });
+    } catch (error) {
+      console.error("Error sending shake count to server:", error);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <h1 className="text-3xl font-bold mb-6">Shake your phone!</h1>
       <p className="mb-4 text-xl">
-        Timer: <span className="font-bold">{timeLeft > 1 ? timeLeft : "Time's up!"}</span>
+        Timer:{" "}
+        <span className="font-bold">
+          {timeLeft > 1 ? timeLeft : "Time's up!"}
+        </span>
       </p>
 
       {/* Progress Bar */}
       <div className="w-full max-w-xs">
         <div className="w-full bg-gray-200 rounded-md h-8 mb-6 relative">
           <div
-            className="bg-blue-600 h-8 rounded-md"
+            className="bg-blue-300 h-8 rounded-md"
             style={{ width: `${progressBarWidth}%` }}
           />
-          <span className="absolute left-1/2 top-0 text-green-800 font-semibold text-xl">
+          <span className="absolute left-1/2 top-0 text-green-600 font-semibold text-xl">
             {shakeCount}
           </span>
         </div>
