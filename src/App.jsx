@@ -14,7 +14,7 @@ function App() {
 
   const shakeSpeedThreshold = 45; // Acceleration threshold for detecting a shake
   const directionChangeThreshold = 20; // Direction change threshold for detecting a shake
-  const targetShake = 70;
+  const targetShake = 100;
 
 
   useEffect(() => {
@@ -80,6 +80,7 @@ function App() {
 
     // Update progress bar width based on shake count
     const updatedWidth = (shakeCount / targetShake) * 100;
+    console.log(updatedWidth);
     setProgressBarWidth(updatedWidth);
   };
 
